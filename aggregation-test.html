@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+
+<canvas id="myCanvas" width="300" height="300" > </canvas>
+
+<script>
+
+var aggregation = (baseClass, ...mixins) => {
+    class base extends baseClass {
+        constructor (...args) {
+            super(...args);
+            mixins.forEach((mixin) => {
+                copyProps(this,(new mixin));
+            });
+        }
+    }
+    let copyProps = (target, source) => {  // this function copies all properties and symbols, filtering out some special ones
+        Object.getOwnPropertyNames(source)
+              .concat(Object.getOwnPropertySymbols(source))
+              .forEach((prop) => {
+                 if (!prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/))
+                    Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop));
+               })
+    }
+    mixins.forEach((mixin) => { // outside contructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
+        copyProps(base.prototype, mixin.prototype);
+        copyProps(base, mixin);
+    });
+    return base;
+}
+
+
+class Person{
+   constructor(n,s,y){
+      this.name=n;
+	  this.years=y;
+   }
+}
+
+class iMale{
+    list(){alert("list trigerd")}
+}
+
+class iChild{
+   tellAge(){}
+}
+
+class Boy extends aggregation(iChild,iMale){
+	constructor(n,s,y,x){
+	super();
+      this.name=n;
+	  this.years=y;
+	  this.X = x
+   }
+	tellAge(){alert(this.name+' was '+this.years+' years old. '+this.X);}
+}
+
+
+
+
+
+var m = new Boy('Mike','male',27,444);
+
+m.tellAge(); // Mike is 12 years old.
+m.list();
+
+
+
+</script>
+
+</body>
+</html>
