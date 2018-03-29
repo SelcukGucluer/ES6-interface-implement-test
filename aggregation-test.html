@@ -3,74 +3,71 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>Untitled Document</title>
+<script src="aggregation.js"></script>
 </head>
 
 <body>
 
-<canvas id="myCanvas" width="300" height="300" > </canvas>
 
 <script>
 
-var aggregation = (baseClass, ...mixins) => {
-    class base extends baseClass {
-        constructor (...args) {
-            super(...args);
-            mixins.forEach((mixin) => {
-                copyProps(this,(new mixin));
-            });
-        }
-    }
-    let copyProps = (target, source) => {  // this function copies all properties and symbols, filtering out some special ones
-        Object.getOwnPropertyNames(source)
-              .concat(Object.getOwnPropertySymbols(source))
-              .forEach((prop) => {
-                 if (!prop.match(/^(?:constructor|prototype|arguments|caller|name|bind|call|apply|toString|length)$/))
-                    Object.defineProperty(target, prop, Object.getOwnPropertyDescriptor(source, prop));
-               })
-    }
-    mixins.forEach((mixin) => { // outside contructor() to allow aggregation(A,B,C).staticFunction() to be called etc.
-        copyProps(base.prototype, mixin.prototype);
-        copyProps(base, mixin);
-    });
-    return base;
-}
-
 
 class Person{
-   constructor(n,s,y){
-      this.name=n;
-	  this.years=y;
+   constructor(name,years){
+      this.name=name;
+	  this.years=years;
    }
+   
+   Talk(){};
+   Eat(){};
 }
 
-class iMale{
-    list(){alert("list trigerd")}
+class iSinger{
+    Sing(){}
+	WriteASong(){}
 }
 
-class iChild{
-   tellAge(){}
+class iEngineer{
+	Develop(){}
 }
 
-class Boy extends aggregation(iChild,iMale){
-	constructor(n,s,y,x){
-	super();
-      this.name=n;
-	  this.years=y;
-	  this.X = x
+class Boy extends aggregation(Person,iSinger){
+	constructor(n,y,song){
+	super(n,y);
+	  this.song = song;
    }
-	tellAge(){alert(this.name+' was '+this.years+' years old. '+this.X);}
+	Sing(){alert(this.name+' was '+this.years+' years old. and singing '+this.song);}
+}
+
+class Girl extends aggregation(Person,iEngineer){
+	constructor(n,y,language){
+	super(n,y);
+	  this.language = language;
+   }
+	Develop(){alert(this.name+' was '+this.years+' years old. and knows '+this.language);}
+}
+
+class smart extends aggregation(Person,iEngineer,iSinger){
+	constructor(n,y,language){
+	super(n,y);
+	  this.language = language;
+   }
+	Develop(){alert(this.name+' was '+this.years+' years old. and knows '+this.language);}
+	
+	Sing(){alert(this.name+' was '+this.years+' years old. and singing '+this.song);}
 }
 
 
+myboy = new Boy("Mike",12,"stand by me");
+mygirl = new Girl("Hannah",16,"C#")
 
 
 
-var m = new Boy('Mike','male',27,444);
+myboy.Sing();
 
-m.tellAge(); // Mike is 12 years old.
-m.list();
+mygirl.Develop();
 
-
+myboy.Develop(); // error : Uncaught TypeError: myboy.Develop is not a function
 
 </script>
 
