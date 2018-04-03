@@ -36,7 +36,7 @@ class Boy extends aggregation(Person,iSinger){
 	super(n,y);
 	  this.song = song;
    }
-	Sing(){alert(this.name+' was '+this.years+' years old. and singing '+this.song);}
+	Sing(){alert(this.name+' is '+this.years+' years old. and singing '+this.song);}
 }
 
 class Girl extends aggregation(Person,iEngineer){
@@ -44,28 +44,32 @@ class Girl extends aggregation(Person,iEngineer){
 	super(n,y);
 	  this.language = language;
    }
-	Develop(){alert(this.name+' was '+this.years+' years old. and knows '+this.language);}
+	Develop(){alert(this.name+' is '+this.years+' years old. and knows '+this.language);}
 }
 
 class smart extends aggregation(Person,iEngineer,iSinger){
-	constructor(n,y,language){
+	constructor(n,y,language,song){
 	super(n,y);
 	  this.language = language;
    }
-	Develop(){alert(this.name+' was '+this.years+' years old. and knows '+this.language);}
+	Develop(){alert(this.name+' is '+this.years+' years old. and knows '+this.language);}
 	
-	Sing(){alert(this.name+' was '+this.years+' years old. and singing '+this.song);}
+	Sing(){alert(this.name+' is '+this.years+' years old. and singing '+this.song);}
 }
 
 
 myboy = new Boy("Mike",12,"stand by me");
 mygirl = new Girl("Hannah",16,"C#")
-
+smartkit = new smart("Jhon",15,"C#","fly me to the moon")
 
 
 myboy.Sing();
 
 mygirl.Develop();
+
+smartkit.Sing();
+smartkit.Develop();
+
 
 myboy.Develop(); // error : Uncaught TypeError: myboy.Develop is not a function
 
